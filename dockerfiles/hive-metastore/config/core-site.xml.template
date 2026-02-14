@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<configuration>
+    <!-- S3A FileSystem Implementation -->
+    <property>
+        <name>fs.s3.impl</name>
+        <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+        <description>The implementation class for s3: URIs</description>
+    </property>
+
+    <property>
+        <name>fs.s3a.impl</name>
+        <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+        <description>The implementation class for s3a: URIs</description>
+    </property>
+
+    <!-- AWS Credentials -->
+    <property>
+        <name>fs.s3a.access.key</name>
+        <value>${AWS_ACCESS_KEY_ID}</value>
+        <description>AWS access key ID</description>
+    </property>
+
+    <property>
+        <name>fs.s3a.secret.key</name>
+        <value>${AWS_SECRET_ACCESS_KEY}</value>
+        <description>AWS secret access key</description>
+    </property>
+
+    <!-- S3 Endpoint Configuration -->
+    <property>
+        <name>fs.s3a.endpoint</name>
+        <value>s3.${AWS_REGION}.amazonaws.com</value>
+        <description>AWS S3 endpoint</description>
+    </property>
+
+    <!-- Path Style Access -->
+    <property>
+        <name>fs.s3a.path.style.access</name>
+        <value>true</value>
+        <description>Enable path-style access to S3 buckets</description>
+    </property>
+
+    <!-- SSL Configuration -->
+    <property>
+        <name>fs.s3a.connection.ssl.enabled</name>
+        <value>true</value>
+        <description>Enable SSL for S3 connections</description>
+    </property>
+
+    <!-- Connection Settings -->
+    <property>
+        <name>fs.s3a.connection.maximum</name>
+        <value>100</value>
+        <description>Maximum number of simultaneous connections to S3</description>
+    </property>
+
+    <property>
+        <name>fs.s3a.connection.timeout</name>
+        <value>200000</value>
+        <description>Connection timeout in milliseconds</description>
+    </property>
+
+    <!-- Fast Upload Settings -->
+    <property>
+        <name>fs.s3a.fast.upload</name>
+        <value>true</value>
+        <description>Enable fast upload to S3</description>
+    </property>
+
+    <property>
+        <name>fs.s3a.fast.upload.buffer</name>
+        <value>disk</value>
+        <description>Use disk for buffering during uploads</description>
+    </property>
+</configuration>

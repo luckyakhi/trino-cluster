@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trino-worker
+spec:
+  replicas: 1 # Can scale up
+  selector:
+    matchLabels:
+      app: trino-worker
+  template:
+    metadata:
+      labels:
+        app: trino-worker
+    spec:
+      volumes:
+        - name: config-volume
+          emptyDir: {}
+        - name: config-map-volume
+          configMap:
+            name: trino-config
+      initContainers:
+        - name: init-config
+          image: busybox
+          command: ['sh', '-c', 'cp /mnt/config/node.properties.template /etc/trino/node.properties && echo "node.id=$(cat /proc/sys/kernel/random/uuid)" >> /etc/trino/node.properties && cp /mnt/config/jvm.config /etc/trino/jvm.config && cp /mnt/config/worker.config.properties /etc/trino/config.properties && mkdir -p /etc/trino/catalog && cp /mnt/config/tpch.properties /etc/trino/catalog/tpch.properties && cp /mnt/config/hive.properties /etc/trino/catalog/hive.properties']
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/trino
+            - name: config-map-volume
+              mountPath: /mnt/config
+      containers:
+        - name: trino-worker
+          image: trinodb/trino:479
+          ports:
+            - containerPort: 8080
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: AWS_SECRET_ACCESS_KEY
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/trino
+          livenessProbe:
+            httpGet:
+              path: /v1/info
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /v1/info
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
